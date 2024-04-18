@@ -6,6 +6,9 @@ import frankvicky.cc.org.springframework.beans.factory.config.BeanDefinition
 import kotlin.reflect.full.createInstance
 
 
+// Spring 的核心類別（實作做了依賴注入功能）
+// 擴充了AbstractBeanFactory並提供了一個框架方法（framework method）來對Bean進行自動注入
+// 實例化Bean、執行依賴注入、初始化bean等相關工作都由該類別負責
 abstract class AbstractAutowireCapableBeanFactory: AbstractBeanFactory() {
 
     var instantiationStrategy = SimpleInstantiationStrategy()
