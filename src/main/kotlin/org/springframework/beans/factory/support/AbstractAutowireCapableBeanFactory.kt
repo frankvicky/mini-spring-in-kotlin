@@ -1,11 +1,15 @@
 package frankvicky.cc.org.springframework.beans.factory.support
 
+import cn.hutool.core.bean.BeanUtil
 import frankvicky.cc.org.springframework.beans.BeansException
 import frankvicky.cc.org.springframework.beans.factory.config.BeanDefinition
 import kotlin.reflect.full.createInstance
 
 
 abstract class AbstractAutowireCapableBeanFactory: AbstractBeanFactory() {
+
+    var instantiationStrategy = SimpleInstantiationStrategy()
+
     override fun createBean(beanName: String, beanDefinition: BeanDefinition): Any =
         doCreateBean(beanName, beanDefinition)
 
@@ -13,12 +17,27 @@ abstract class AbstractAutowireCapableBeanFactory: AbstractBeanFactory() {
         val beanClass = beanDefinition.beanClass
 
         val bean = try {
-            beanClass.createInstance()
+             beanClass.createInstance()
+                 .also { applyPropertyValues(beanName, it, beanDefinition) }
         } catch (e: Exception) {
             throw BeansException("Instantiation of bean failed", e)
         }
 
         addSingleton(beanName, bean)
         return bean
+    }
+
+    // 實例化 bean
+    protected fun createBeanInstance(beanDefinition: BeanDefinition): Any =
+        instantiationStrategy.instantiate(beanDefinition)
+
+    // 為 bean 填充屬性
+    protected fun applyPropertyValues(beanName: String, bean: Any, beanDefinition: BeanDefinition) {
+        try {
+            beanDefinition.propertyValues.getPropertyValues()
+                .forEach { BeanUtil.setFieldValue(bean, it.name, it.value) }
+        } catch (e: Exception) {
+            throw BeansException("Error setting property values for bean: $beanName", e)
+        }
     }
 }

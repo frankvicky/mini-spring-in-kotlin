@@ -3,6 +3,7 @@ package org.springframework.test.ioc
 import frankvicky.cc.org.springframework.beans.factory.config.BeanDefinition
 import frankvicky.cc.org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.junit.jupiter.api.Test
+import org.springframework.test.ioc.service.HelloService
 
 class BeanDefinitionAndBeanDefinitionRegistryTest {
     @Test
